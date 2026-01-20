@@ -152,8 +152,6 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// does not reset user's password, but is still secure as it only allows 
-// access to the owner of the email address associated with the account
 export const accessAccount = async (req, res) => {
     try {
         const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRET);
