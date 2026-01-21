@@ -1,20 +1,38 @@
 import { useState } from "react";
 import axios from "axios";
 import { API } from "../config";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-  // state
+  // states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // hooks
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // console.table({ email, password });
-      const { data } = await axios.post(`${API}/pre-register`, { email, password });
+      setLoading(true);
+      const { data } = await axios.post(`/pre-register`, { email, password });
+
+      if (data?.error) {
+        toast.error(data.error);
+      } else {
+        toast.success("Registration successful. Please check your email to activate account.");
+        navigate("/");
+      }
+      setLoading(false);
+
       console.log(data);
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong. Try again.");
+      setLoading(false);
     }
   }
 
@@ -28,7 +46,7 @@ export default function Register() {
             <form onSubmit={handleSubmit}>
               <input
                 type="text"
-                placeholder="Ente your email"
+                placeholder="Enter your email"
                 className="form-control mb-4"
                 required
                 autoFocus
@@ -44,7 +62,9 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button className="btn btn-primary col-12 mb-4">Register</button>
+              <button disabled={loading} className="btn btn-primary col-12 mb-4">
+                {loading ? "Waiting..." : "Register"}
+              </button>
             </form>
           </div>
         </div>

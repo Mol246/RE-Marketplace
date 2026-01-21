@@ -1,18 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
-import { API } from "../config";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/auth";
 import { Link } from "react-router-dom";
 
 export default function Login() {
-  //context
-  const [auth, setAuth] = useAuth();
 
   // states
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   // hooks
@@ -21,17 +16,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // console.table({ email, password });
       setLoading(true);
-      const { data } = await axios.post(`/login`, { email, password });
+      const { data } = await axios.post(`/forgot-password`, { email });
 
       if (data?.error) {
         toast.error(data.error);
       } else {
-        setAuth(data);
-        // save in local storage
-        window.localStorage.setItem("auth", JSON.stringify(data));
-        toast.success("Login successful. Welcome back.");
+        toast.success("Check your email for password reset link.");
         navigate("/");
       }
       setLoading(false);
@@ -46,7 +37,7 @@ export default function Login() {
 
   return (
     <div>
-      <h1 className="display-1 bg-primary text-light p-5">Login</h1>
+      <h1 className="display-1 bg-primary text-light p-5">Forgot Password</h1>
 
       <div className="container">
         <div className="row">
@@ -61,22 +52,13 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="form-control mb-4"
-                required
-                autoFocus
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
               <button disabled={loading} className="btn btn-primary col-12 mb-4">
-                {loading ? "Waiting..." : "Login"}
+                {loading ? "Waiting..." : "Submit"}
               </button>
             </form>
 
-            <Link to="/auth/forgot-password">
-              Forgot password?
+            <Link to="/login">
+              Back to login
             </Link>
           </div>
         </div>
